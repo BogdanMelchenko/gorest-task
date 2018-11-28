@@ -1,0 +1,25 @@
+version: '2'
+services:
+  database:    
+    image: database:latest
+    environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres    
+    ports:
+    - "5555:5432"
+    container_name: database
+  application:
+    image: application:latest
+    environment:
+    - TEST_DB_USERNAME=postgres
+    - TEST_DB_PASSWORD=postgres
+    - TEST_DB_NAME=gotask
+    - TEST_DB_PORT=5432
+    - TEST_DB_SSL=disable
+    - TEST_DB_HOST=database 
+    - TEST_APP_PORT=:8080  
+    ports:
+    - 8081:8080
+    container_name: application
+    links:
+    - database
