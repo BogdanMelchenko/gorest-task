@@ -15,7 +15,6 @@ import (
 var envr *routes.Env
 
 func init() {
-
 	connectionString :=
 		fmt.Sprintf("user=%s sslmode=%s host=%s port=%s password=%s dbname=%s",
 			os.Getenv("TEST_DB_USERNAME"), os.Getenv("TEST_DB_SSL"), os.Getenv("TEST_DB_HOST"), os.Getenv("TEST_DB_PORT"), os.Getenv("TEST_DB_PASSWORD"), os.Getenv("TEST_DB_NAME"))

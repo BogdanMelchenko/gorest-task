@@ -8,11 +8,11 @@ import (
 )
 
 type Task struct {
-	ID          int    `json:"id"`
-	Title       string `json:"name"`
-	Description string `json:"description"`
-	Done        bool   `json:"done"`
-	Owner_Id    int    `json:"owner_id"`
+	ID          int    `json:"id" xml:"id"`
+	Title       string `json:"title"  xml:"title"`
+	Description string `json:"description" xml:"description"`
+	Done        bool   `json:"done" xml:"done"`
+	OwnerID     int    `json:"owner_id" xml:"owner_id"`
 }
 
 func (t *Task) GetTask(db *sql.DB) error {
@@ -20,7 +20,7 @@ func (t *Task) GetTask(db *sql.DB) error {
 }
 
 func (t *Task) GetTaskOfUser(db *sql.DB) error {
-	return db.QueryRow("SELECT title, description, done FROM tasks WHERE owner_id=$1 AND id=$2", t.Owner_Id, t.ID).Scan(&t.Title, &t.Description, &t.Done)
+	return db.QueryRow("SELECT title, description, done FROM tasks WHERE owner_id=$1 AND id=$2", t.OwnerID, t.ID).Scan(&t.Title, &t.Description, &t.Done)
 }
 
 func GetTasksOfUser(db *sql.DB, owner_id int, titleFilter string) ([]Task, error) {
@@ -81,14 +81,13 @@ func GetTasks(db *sql.DB) ([]Task, error) {
 
 	for rows.Next() {
 		var t Task
-		if err := rows.Scan(&t.ID, &t.Title, &t.Description, &t.Done, &t.Owner_Id); err != nil {
+		if err := rows.Scan(&t.ID, &t.Title, &t.Description, &t.Done, &t.OwnerID); err != nil {
 			return nil, err
 		}
 		tasks = append(tasks, t)
 	}
 
 	return tasks, nil
-
 }
 
 func GetTasksFilteredByTitle(db *sql.DB, titleFilter string) ([]Task, error) {
@@ -106,12 +105,11 @@ func GetTasksFilteredByTitle(db *sql.DB, titleFilter string) ([]Task, error) {
 
 	for rows.Next() {
 		var t Task
-		if err := rows.Scan(&t.ID, &t.Title, &t.Description, &t.Done, &t.Owner_Id); err != nil {
+		if err := rows.Scan(&t.ID, &t.Title, &t.Description, &t.Done, &t.OwnerID); err != nil {
 			return nil, err
 		}
 		tasks = append(tasks, t)
 	}
 
 	return tasks, nil
-
 }

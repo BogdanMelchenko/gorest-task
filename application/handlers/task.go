@@ -30,7 +30,11 @@ func GetTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusOK, p)
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusOK, p)
+	} else {
+		util.RespondWithXML(w, http.StatusOK, p)
+	}
 }
 
 func GetTaskOfUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -46,7 +50,7 @@ func GetTaskOfUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	p := model.Task{ID: taskID, Owner_Id: ownerID}
+	p := model.Task{ID: taskID, OwnerID: ownerID}
 	if err := p.GetTaskOfUser(DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -57,7 +61,11 @@ func GetTaskOfUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusOK, p)
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusOK, p)
+	} else {
+		util.RespondWithXML(w, http.StatusOK, p)
+	}
 }
 
 func GetTasks(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -76,7 +84,11 @@ func GetTasks(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusOK, tasks)
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusOK, tasks)
+	} else {
+		util.RespondWithXML(w, http.StatusOK, tasks)
+	}
 }
 
 func GetTasksOfUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -98,7 +110,11 @@ func GetTasksOfUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusOK, tasks)
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusOK, tasks)
+	} else {
+		util.RespondWithXML(w, http.StatusOK, tasks)
+	}
 }
 
 func CreateTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -115,7 +131,12 @@ func CreateTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusCreated, t)
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusCreated, t)
+	} else {
+		util.RespondWithXML(w, http.StatusCreated, t)
+	}
+
 }
 
 func UpdateTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -140,7 +161,11 @@ func UpdateTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusOK, t)
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusOK, t)
+	} else {
+		util.RespondWithXML(w, http.StatusOK, t)
+	}
 }
 
 func DeleteTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -156,6 +181,10 @@ func DeleteTask(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	if r.Header.Get("Content-type") != "application/xml" {
+		util.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+	} else {
+		util.RespondWithXML(w, http.StatusOK, map[string]string{"result": "success"})
+	}
 
-	util.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
