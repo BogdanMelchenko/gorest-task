@@ -29,8 +29,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		}
 		return
 	}
-
-	util.RespondWithJSON(w, http.StatusOK, u)
+	util.RespondWithoutError(w, http.StatusOK, u, r.Header.Get("Content-type"))
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -54,7 +53,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	util.RespondWithJSON(w, http.StatusOK, users)
+	util.RespondWithoutError(w, http.StatusOK, users, r.Header.Get("Content-type"))
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -70,8 +69,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	util.RespondWithJSON(w, http.StatusCreated, u)
+	util.RespondWithoutError(w, http.StatusCreated, u, r.Header.Get("Content-type"))
 }
 
 func UpdateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -95,8 +93,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	util.RespondWithJSON(w, http.StatusOK, u)
+	util.RespondWithoutError(w, http.StatusOK, u, r.Header.Get("Content-type"))
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
@@ -112,6 +109,5 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	util.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+	util.RespondWithoutError(w, http.StatusOK, map[string]string{"result": "success"}, r.Header.Get("Content-type"))
 }
