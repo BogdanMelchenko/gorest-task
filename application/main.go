@@ -26,7 +26,7 @@ func init() {
 	}
 
 	muxRouter := mux.NewRouter()
-	psds := stores.PostgresDbStore{Db: psDb}
+	psds := stores.PostgresDb{Db: psDb}
 
 	envr = &routes.Env{Router: muxRouter, TaskStore: &psds, UserStore: &psds}
 	routes.InitilizeRoutes(envr)
