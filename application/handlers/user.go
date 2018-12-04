@@ -7,11 +7,12 @@ import (
 	"strconv"
 
 	model "github.com/BogdanMelchenko/gorest-task/application/model"
+	stores "github.com/BogdanMelchenko/gorest-task/application/stores"
 	util "github.com/BogdanMelchenko/gorest-task/application/util"
 	"github.com/gorilla/mux"
 )
 
-func GetUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
+func GetUser(w http.ResponseWriter, r *http.Request, store stores.UserStore) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -20,7 +21,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 	}
 
 	u := model.User{ID: id}
-	if err := u.GetUser(DB); err != nil {
+	if err := store.GetUser(&u); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			util.RespondWithError(w, http.StatusNotFound, "User not found")
@@ -32,7 +33,7 @@ func GetUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 	util.RespondWithoutError(w, http.StatusOK, u, r.Header.Get("Content-type"))
 }
 
-func GetUsers(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
+func GetUsers(w http.ResponseWriter, r *http.Request, store stores.UserStore) {
 
 	v := r.URL.Query()
 
@@ -45,9 +46,9 @@ func GetUsers(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 
 	var users []model.User
 	if roleFilterString != "" && err == nil {
-		users, err = model.GetUsersFilteredByRole(DB, roleFilter)
+		users, err = store.GetUsersFilteredByRole(roleFilter)
 	} else {
-		users, err = model.GetUsers(DB)
+		users, err = store.GetUsers()
 	}
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -56,7 +57,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 	util.RespondWithoutError(w, http.StatusOK, users, r.Header.Get("Content-type"))
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
+func CreateUser(w http.ResponseWriter, r *http.Request, store stores.UserStore) {
 	var u model.User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
@@ -65,14 +66,14 @@ func CreateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 	}
 	defer r.Body.Close()
 
-	if err := u.CreateUser(DB); err != nil {
+	if err := store.CreateUser(&u); err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	util.RespondWithoutError(w, http.StatusCreated, u, r.Header.Get("Content-type"))
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
+func UpdateUser(w http.ResponseWriter, r *http.Request, store stores.UserStore) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -89,14 +90,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 	defer r.Body.Close()
 	u.ID = id
 
-	if err := u.UpdateUser(DB); err != nil {
+	if err := store.UpdateUser(&u); err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	util.RespondWithoutError(w, http.StatusOK, u, r.Header.Get("Content-type"))
 }
 
-func DeleteUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
+func DeleteUser(w http.ResponseWriter, r *http.Request, store stores.UserStore) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -105,7 +106,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request, DB *sql.DB) {
 	}
 
 	u := model.User{ID: id}
-	if err := u.DeleteUser(DB); err != nil {
+	if err := store.DeleteUser(&u); err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

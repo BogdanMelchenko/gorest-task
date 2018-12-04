@@ -8,6 +8,7 @@ import (
 	"os"
 
 	routes "github.com/BogdanMelchenko/gorest-task/application/routes"
+	stores "github.com/BogdanMelchenko/gorest-task/application/stores"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
@@ -25,7 +26,9 @@ func init() {
 	}
 
 	muxRouter := mux.NewRouter()
-	envr = &routes.Env{Router: muxRouter, Db: psDb}
+	psds := stores.PostgresDbStore{Db: psDb}
+
+	envr = &routes.Env{Router: muxRouter, TaskStore: &psds, UserStore: &psds}
 	routes.InitilizeRoutes(envr)
 }
 

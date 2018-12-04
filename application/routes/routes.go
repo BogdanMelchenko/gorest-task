@@ -1,17 +1,17 @@
 package routes
 
 import (
-	"database/sql"
-
+	stores "github.com/BogdanMelchenko/gorest-task/application/stores"
 	"github.com/gorilla/mux"
 )
 
 type Env struct {
-	Router *mux.Router
-	Db     *sql.DB
+	Router    *mux.Router
+	UserStore stores.UserStore
+	TaskStore stores.TaskStore
 }
 
 func InitilizeRoutes(env *Env) {
-	initializeTaskRoutes(env.Router, env.Db)
-	initializeUserRoutes(env.Router, env.Db)
+	initializeTaskRoutes(*env)
+	initializeUserRoutes(*env)
 }

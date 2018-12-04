@@ -1,32 +1,38 @@
 package routes
 
 import (
-	"database/sql"
 	"net/http"
 
 	handlers "github.com/BogdanMelchenko/gorest-task/application/handlers"
-	"github.com/gorilla/mux"
 )
 
-func initializeTaskRoutes(router *mux.Router, db *sql.DB) {
+func initializeTaskRoutes(env Env) {
 
-	router.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTasks(w, r, db)
+	env.Router.HandleFunc("/tasks", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetTasks(w, r, env.TaskStore)
 	}).Methods("GET")
 
-	router.HandleFunc("/task", func(w http.ResponseWriter, r *http.Request) {
-		handlers.CreateTask(w, r, db)
-	}).Methods("POST")
+	// env.Router.HandleFunc("/task", func(w http.ResponseWriter, r *http.Request) {
+	// 	handlers.CreateTask(w, r, env.TaskStore)
+	// }).Methods("POST")
 
-	router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTask(w, r, db)
+	env.Router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetTask(w, r, env.TaskStore)
 	}).Methods("GET")
 
-	router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UpdateTask(w, r, db)
+	env.Router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UpdateTask(w, r, env.TaskStore)
 	}).Methods("PUT")
 
-	router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
-		handlers.DeleteTask(w, r, db)
+	env.Router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DeleteTask(w, r, env.TaskStore)
 	}).Methods("DELETE")
+
+	env.Router.HandleFunc("/user/{owner_id:[0-9]+}/tasks", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetTasksOfUser(w, r, env.TaskStore)
+	}).Methods("GET")
+
+	env.Router.HandleFunc("/user/{owner_id:[0-9]+}/task/{task_id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.GetTaskOfUser(w, r, env.TaskStore)
+	}).Methods("GET")
 }
