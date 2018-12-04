@@ -12,9 +12,9 @@ func initializeTaskRoutes(env Env) {
 		handlers.GetTasks(w, r, env.TaskStore)
 	}).Methods("GET")
 
-	// env.Router.HandleFunc("/task", func(w http.ResponseWriter, r *http.Request) {
-	// 	handlers.CreateTask(w, r, env.TaskStore)
-	// }).Methods("POST")
+	env.Router.HandleFunc("/task", func(w http.ResponseWriter, r *http.Request) {
+		handlers.CreateTask(w, r, env.TaskStore)
+	}).Methods("POST")
 
 	env.Router.HandleFunc("/task/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetTask(w, r, env.TaskStore)

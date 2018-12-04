@@ -17,15 +17,15 @@ type TaskStore interface {
 	GetTasksOfUser(ownerID int, titleFilter string) ([]model.Task, error)
 }
 
-func (store *PostgresDbStore) GetTask(task *model.Task) error {
+func (store *PostgresDb) GetTask(task *model.Task) error {
 	return store.Db.QueryRow("SELECT title, description, done FROM tasks WHERE id=$1", task.ID).Scan(&task.Title, &task.Description, &task.Done)
 }
 
-func (store *PostgresDbStore) GetTaskOfUser(task *model.Task) error {
+func (store *PostgresDb) GetTaskOfUser(task *model.Task) error {
 	return store.Db.QueryRow("SELECT title, description, done FROM tasks WHERE owner_id=$1 AND id=$2", task.OwnerID, task.ID).Scan(&task.Title, &task.Description, &task.Done)
 }
 
-func (store *PostgresDbStore) GetTasksOfUser(owner_id int, titleFilter string) ([]model.Task, error) {
+func (store *PostgresDb) GetTasksOfUser(owner_id int, titleFilter string) ([]model.Task, error) {
 	filter := fmt.Sprintf("%%(%s)%%", titleFilter)
 	rows, err := store.Db.Query(
 		"SELECt id, title, description, done FROM tasks WHERE owner_id=$1 and  title SIMILAR TO $2",
@@ -48,19 +48,19 @@ func (store *PostgresDbStore) GetTasksOfUser(owner_id int, titleFilter string) (
 	return tasks, nil
 }
 
-func (store *PostgresDbStore) UpdateTask(task *model.Task) error {
+func (store *PostgresDb) UpdateTask(task *model.Task) error {
 	_, err :=
 		store.Db.Exec("UPDATE tasks SET title=$1, description=$2, done=$3",
 			task.Title, task.Description, task.Done)
 	return err
 }
 
-func (store *PostgresDbStore) DeleteTask(task *model.Task) error {
+func (store *PostgresDb) DeleteTask(task *model.Task) error {
 	_, err := store.Db.Exec("DELETE FROM tasks WHERE id=$1", task.ID)
 	return err
 }
 
-func (store *PostgresDbStore) CreateTask(task *model.Task) error {
+func (store *PostgresDb) CreateTask(task *model.Task) error {
 	err := store.Db.QueryRow("INSERT INTO tasks(title, description, done) VALUES ($1, $2, $3) RETURNING id",
 		task.Title, task.Description, task.Done).Scan(&task.ID)
 	if err != nil {
@@ -70,7 +70,7 @@ func (store *PostgresDbStore) CreateTask(task *model.Task) error {
 	return nil
 }
 
-func (store *PostgresDbStore) GetTasks() ([]model.Task, error) {
+func (store *PostgresDb) GetTasks() ([]model.Task, error) {
 	rows, err := store.Db.Query(
 		"SELECt id, title, description,done, owner_id done FROM tasks")
 
@@ -92,7 +92,7 @@ func (store *PostgresDbStore) GetTasks() ([]model.Task, error) {
 	return tasks, nil
 }
 
-func (store *PostgresDbStore) GetTasksFilteredByTitle(titleFilter string) ([]model.Task, error) {
+func (store *PostgresDb) GetTasksFilteredByTitle(titleFilter string) ([]model.Task, error) {
 	filter := fmt.Sprintf("%%(%s)%%", titleFilter)
 
 	rows, err := store.Db.Query(

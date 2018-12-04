@@ -13,7 +13,7 @@ type UserStore interface {
 	GetUser(user *model.User) error
 }
 
-func (store *PostgresDbStore) CreateUser(user *model.User) error {
+func (store *PostgresDb) CreateUser(user *model.User) error {
 	err := store.Db.QueryRow(
 		"INSERT INTO users(name, role) VALUES($1, $2) RETURNING id",
 		user.Name, user.Role).Scan(&user.ID)
@@ -25,7 +25,7 @@ func (store *PostgresDbStore) CreateUser(user *model.User) error {
 	return nil
 }
 
-func (store *PostgresDbStore) GetUsersFilteredByRole(role int) ([]model.User, error) {
+func (store *PostgresDb) GetUsersFilteredByRole(role int) ([]model.User, error) {
 	rows, err := store.Db.Query(
 		"SELECT id, name, role FROM users WHERE role=$1", role)
 
@@ -48,12 +48,12 @@ func (store *PostgresDbStore) GetUsersFilteredByRole(role int) ([]model.User, er
 	return users, nil
 }
 
-func (store *PostgresDbStore) GetUser(user *model.User) error {
+func (store *PostgresDb) GetUser(user *model.User) error {
 	return store.Db.QueryRow("SELECT name, role FROM users WHERE id=$1",
 		user.ID).Scan(&user.Name, &user.Role)
 }
 
-func (store *PostgresDbStore) UpdateUser(user *model.User) error {
+func (store *PostgresDb) UpdateUser(user *model.User) error {
 	_, err :=
 		store.Db.Exec("UPDATE users SET name=$1, role=$2 WHERE id=$3",
 			user.Name, user.Role, user.ID)
@@ -61,13 +61,13 @@ func (store *PostgresDbStore) UpdateUser(user *model.User) error {
 	return err
 }
 
-func (store *PostgresDbStore) DeleteUser(user *model.User) error {
+func (store *PostgresDb) DeleteUser(user *model.User) error {
 	_, err := store.Db.Exec("DELETE FROM users WHERE id=$1", user.ID)
 
 	return err
 }
 
-func (store *PostgresDbStore) GetUsers() ([]model.User, error) {
+func (store *PostgresDb) GetUsers() ([]model.User, error) {
 	rows, err := store.Db.Query(
 		"SELECT id, name, role FROM users")
 

@@ -2,6 +2,6 @@ package stores
 
 import "database/sql"
 
-type PostgresDbStore struct {
+type PostgresDb struct {
 	Db *sql.DB
 }

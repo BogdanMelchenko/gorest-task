@@ -11,9 +11,9 @@ func initializeUserRoutes(env Env) {
 		handlers.GetUsers(w, r, env.UserStore)
 	}).Methods("GET")
 
-	// env.Router.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
-	// 	handlers.CreateUser(w, r, env.UserStore)
-	// }).Methods("POST")
+	env.Router.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
+		handlers.CreateUser(w, r, env.UserStore)
+	}).Methods("POST")
 
 	env.Router.HandleFunc("/user/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.GetUser(w, r, env.UserStore)
